@@ -1,27 +1,28 @@
 
 using UnityEngine;
-
 public class AsteroidMovement : MonoBehaviour
 {
     public float moveSpeed = 2f;
     public float rotationSpeed = 50f;
-
     public Sprite[] asteroidSprites;
 
     private Vector2 moveDirection;
     private SpriteRenderer spriteRenderer;
 
+    // Gets the asteroid's SpriteRenderer.
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    // Randomizes the asteroid's appearance and movement at startup.
     void Start()
     {
         RandomizeAppearance();
         RandomizeMovement();
     }
 
+    // Moves, rotates, and wraps the asteroid around the screen.
     void Update()
     {
         transform.position +=
@@ -62,11 +63,10 @@ public class AsteroidMovement : MonoBehaviour
             Camera.main.ViewportToWorldPoint(position);
 
         if (wrapped)
-        {
             RandomizeMovement();
-        }
     }
 
+    // Selects a random sprite for the asteroid.
     void RandomizeAppearance()
     {
         if (asteroidSprites != null &&
@@ -78,14 +78,14 @@ public class AsteroidMovement : MonoBehaviour
         }
     }
 
+    // Assigns a random movement direction and rotation speed.
     void RandomizeMovement()
     {
-        moveDirection =
-            Random.insideUnitCircle.normalized;
-
+        moveDirection = Random.insideUnitCircle.normalized;
         rotationSpeed = Random.Range(-50f, 50f);
     }
 }
+
 
 
 

@@ -11,17 +11,20 @@ public class ExplosionEffect : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Vector3 startingScale;
 
+    // Gets the SpriteRenderer and records the original scale.
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         startingScale = transform.localScale;
     }
 
+    // Starts the explosion animation.
     void Start()
     {
         StartCoroutine(PlayExplosion());
     }
 
+    // Plays each explosion frame, enlarges the effect, and destroys it.
     IEnumerator PlayExplosion()
     {
         if (explosionSprites == null ||
@@ -36,8 +39,8 @@ public class ExplosionEffect : MonoBehaviour
         {
             spriteRenderer.sprite = explosionSprites[i];
 
-            // Gradually grow as the explosion progresses
-            float progress = (float)(i + 1) / explosionSprites.Length;
+            float progress =
+                (float)(i + 1) / explosionSprites.Length;
 
             transform.localScale = Vector3.Lerp(
                 startingScale,
@@ -48,9 +51,9 @@ public class ExplosionEffect : MonoBehaviour
             yield return new WaitForSeconds(frameDuration);
         }
 
-        // Remove the explosion after the final frame
         Destroy(gameObject);
     }
 }
+
 
 

@@ -5,32 +5,35 @@ public class BulletMovement : MonoBehaviour
 {
     public float bulletSpeed = 10f;
     public float lifetime = 2f;
-    public GameObject[] explosionPrefabs; // Array of explosion prefabs
+    public GameObject[] explosionPrefabs;
+
     private Vector3 travelDirection;
 
-    // Receives the direction the spaceship is facing
+    // Sets the direction the bullet travels.
     public void SetDirection(Vector3 direction)
     {
         travelDirection = direction.normalized;
     }
 
+    // Schedules the bullet for destruction after its lifetime expires.
     void Start()
     {
-        // Destroy the bullet after its lifetime expires
         Destroy(gameObject, lifetime);
     }
 
+    // Moves the bullet in its assigned direction.
     void Update()
     {
-        // Move the bullet in the assigned direction
         transform.position +=
             travelDirection * bulletSpeed * Time.deltaTime;
     }
+
+    // Handles asteroid hits, explosions, replacement spawning, and scoring.
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Asteroid"))
         {
-            // Spawn a random explosion
+            // Spawn a random explosion at the asteroid's position.
             if (explosionPrefabs != null &&
                 explosionPrefabs.Length > 0)
             {
@@ -45,24 +48,19 @@ public class BulletMovement : MonoBehaviour
                 );
             }
 
-            // Spawn a replacement asteroid
+            // Spawn a replacement asteroid.
             AsteroidSpawner spawner =
                 FindFirstObjectByType<AsteroidSpawner>();
 
             if (spawner != null)
-            {
                 spawner.SpawnAsteroid();
-            }
 
             Destroy(other.gameObject);
             Destroy(gameObject);
 
             if (ScoreManager.Instance != null)
-            {
                 ScoreManager.Instance.AddPoints(10);
-            }
         }
     }
 }
 
-//there is an error though. 'BulletMovement' does not contain a definition for 'SetDirection' and no accessible extension method 'SetDirection' accepting a first argument of type 'BulletMovement' could be found (are you missing a using directive or an assembly reference?)

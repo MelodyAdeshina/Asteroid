@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     private InputAction shootAction;
     private bool isRespawning = false;
 
+    // Gets the player's input actions.
     void Awake()
     {
         var playerMap = controls.FindActionMap("Player");
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
         shootAction = playerMap.FindAction("Shoot");
     }
 
+    // Enables player controls.
     void OnEnable()
     {
         moveAction?.Enable();
@@ -34,6 +36,7 @@ public class PlayerController : MonoBehaviour
         shootAction?.Enable();
     }
 
+    // Disables player controls.
     void OnDisable()
     {
         moveAction?.Disable();
@@ -41,6 +44,7 @@ public class PlayerController : MonoBehaviour
         shootAction?.Disable();
     }
 
+    // Handles movement, rotation, shooting, and screen wrapping.
     void Update()
     {
         if (isRespawning)
@@ -49,20 +53,17 @@ public class PlayerController : MonoBehaviour
         float move = moveAction.ReadValue<float>();
         float turn = rotateAction.ReadValue<float>();
 
-        // Rotate the spaceship
         transform.Rotate(
             0f, 0f,
             -turn * rotationSpeed * Time.deltaTime
         );
 
-        // Move forward
         if (move > 0f)
         {
             transform.position +=
                 transform.up * moveSpeed * Time.deltaTime;
         }
 
-        // Shoot when Space is pressed
         if (shootAction != null &&
             shootAction.WasPressedThisFrame())
         {
@@ -72,6 +73,7 @@ public class PlayerController : MonoBehaviour
         WrapScreen();
     }
 
+    // Creates a bullet and sets its travel direction.
     void Shoot()
     {
         if (bulletPrefab == null || shootingPoint == null)
@@ -83,57 +85,50 @@ public class PlayerController : MonoBehaviour
             shootingPoint.rotation
         );
 
-        // Rotate the laser artwork so its tip faces forward
         bullet.transform.Rotate(0f, 0f, -90f);
 
         BulletMovement bulletMovement =
             bullet.GetComponent<BulletMovement>();
 
         if (bulletMovement != null)
-        {
             bulletMovement.SetDirection(transform.up);
-        }
     }
+
+    // Starts the respawn process when the player hits an asteroid.
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!collision.gameObject.CompareTag("Asteroid")
-            || isRespawning)
+        if (!collision.gameObject.CompareTag("Asteroid") ||
+            isRespawning)
         {
             return;
         }
+
         if (ScoreManager.Instance != null)
-        {
-             ScoreManager.Instance.LoseLife();
-             }
-             StartCoroutine(RespawnPlayer());
-             }
+            ScoreManager.Instance.LoseLife();
 
+        StartCoroutine(RespawnPlayer());
+    }
 
+    // Hides the player temporarily, then restores it at the center.
     IEnumerator RespawnPlayer()
     {
         isRespawning = true;
 
-        // Disable controls during respawn
         moveAction?.Disable();
         rotateAction?.Disable();
         shootAction?.Disable();
 
-        // Hide the spaceship and disable its collider
         GetComponent<SpriteRenderer>().enabled = false;
         GetComponent<Collider2D>().enabled = false;
 
-        // Wait before respawning
         yield return new WaitForSeconds(respawnDelay);
 
-        // Return to the center, facing upward
         transform.position = Vector3.zero;
         transform.rotation = Quaternion.identity;
 
-        // Make the spaceship visible and restore collisions
         GetComponent<SpriteRenderer>().enabled = true;
         GetComponent<Collider2D>().enabled = true;
 
-        // Restore controls
         moveAction?.Enable();
         rotateAction?.Enable();
         shootAction?.Enable();
@@ -141,6 +136,7 @@ public class PlayerController : MonoBehaviour
         isRespawning = false;
     }
 
+    // Wraps the player to the opposite screen edge.
     void WrapScreen()
     {
         Vector3 position =
@@ -160,6 +156,7 @@ public class PlayerController : MonoBehaviour
             Camera.main.ViewportToWorldPoint(position);
     }
 }
+
 
 
 

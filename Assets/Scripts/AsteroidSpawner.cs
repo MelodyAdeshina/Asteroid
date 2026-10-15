@@ -7,6 +7,7 @@ public class AsteroidSpawner : MonoBehaviour
     public int asteroidCount = 3;
     public float spawnPadding = 0.5f;
 
+    // Spawns the starting asteroids when the game begins.
     void Start()
     {
         for (int i = 0; i < asteroidCount; i++)
@@ -15,6 +16,7 @@ public class AsteroidSpawner : MonoBehaviour
         }
     }
 
+    // Spawns an asteroid at a randomly selected screen edge.
     public void SpawnAsteroid()
     {
         if (asteroidPrefab == null)
@@ -22,7 +24,7 @@ public class AsteroidSpawner : MonoBehaviour
 
         Camera cam = Camera.main;
 
-        // Choose a random screen edge
+        // Select a random edge and position along it.
         int edge = Random.Range(0, 4);
         Vector2 spawnPosition = Vector2.zero;
 
@@ -69,5 +71,6 @@ public class AsteroidSpawner : MonoBehaviour
         );
     }
 }
+
 
 
